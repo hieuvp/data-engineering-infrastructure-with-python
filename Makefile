@@ -17,3 +17,5 @@ pull-charts:
 	scripts/pull-chart-elasticsearch.sh
 	scripts/pull-chart-kibana.sh
 	scripts/pull-chart-nifi.sh
+	scripts/pull-chart-pgadmin4.sh
+	scripts/pull-chart-postgresql.sh
