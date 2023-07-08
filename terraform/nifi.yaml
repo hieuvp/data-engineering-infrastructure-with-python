@@ -1,0 +1,27 @@
+replicaCount: 1
+
+zookeeper:
+  replicaCount: 1
+
+auth:
+  singleUser:
+    username: admin
+
+persistence:
+  enabled: true
+
+resources:
+  requests:
+    cpu: "500m"
+    memory: "1Gi"
+  limits:
+    cpu: "1000m"
+    memory: "2Gi"
+
+logresources:
+  requests:
+    cpu: 50m
+    memory: 50Mi
+  limits:
+    cpu: 250m
+    memory: 250Mi

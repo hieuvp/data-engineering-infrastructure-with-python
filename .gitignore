@@ -1,0 +1,24 @@
+# JetBrains - Developer Tools for Professionals and Teams
+.idea/
+
+# Visual Studio Code - Code Editing - Redefined
+.vscode/
+
+# Operating System
+.DS_Store
+
+# Virtual Python Environment
+venv/
+
+# Compiled Python Bytecode Files
+__pycache__/
+*.pyc
+
+# Terraform Files
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+
+# Secrets and Sensitive Information
+scripts/set-env.sh
+terraform/kube/

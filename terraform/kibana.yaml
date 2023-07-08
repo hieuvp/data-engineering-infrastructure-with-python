@@ -1,0 +1,11 @@
+elasticsearchHosts: "https://elasticsearch:9200"
+elasticsearchCertificateSecret: elasticsearch-certs
+elasticsearchCredentialSecret: elasticsearch-credentials
+
+resources:
+  requests:
+    cpu: "500m"
+    memory: "1Gi"
+  limits:
+    cpu: "1000m"
+    memory: "2Gi"
