@@ -7,8 +7,6 @@ set -eoux pipefail
 # execute this script from the remote host.
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-source scripts/set-env.sh
-
 minikube stop || true
 minikube delete || true
 
