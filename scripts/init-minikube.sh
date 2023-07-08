@@ -9,8 +9,8 @@ set -eoux pipefail
 
 source scripts/set-env.sh
 
-minikube stop
-minikube delete
+minikube stop || true
+minikube delete || true
 
 minikube start --driver=docker \
   --memory=10000 \
