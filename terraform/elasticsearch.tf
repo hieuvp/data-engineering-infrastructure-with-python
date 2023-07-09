@@ -52,12 +52,16 @@ data "kubernetes_secret" "elasticsearch_credentials" {
   ]
 }
 
+output "elastic_enabled" {
+  value = local.elastic_enabled
+}
+
 output "elasticsearch_username" {
   sensitive = true
-  value     = local.elastic_enabled ? data.kubernetes_secret.elasticsearch_credentials.data.username : ""
+  value     = local.elastic_enabled ? data.kubernetes_secret.elasticsearch_credentials.data.username : null
 }
 
 output "elasticsearch_password" {
   sensitive = true
-  value     = local.elastic_enabled ? data.kubernetes_secret.elasticsearch_credentials.data.password : ""
+  value     = local.elastic_enabled ? data.kubernetes_secret.elasticsearch_credentials.data.password : null
 }

@@ -9,8 +9,8 @@ provider "helm" {
 }
 
 locals {
-  airflow_enabled  = true
-  elastic_enabled  = false
-  nifi_enabled     = false
+  airflow_enabled  = false
+  elastic_enabled  = true
+  nifi_enabled     = true
   postgres_enabled = true
 }
