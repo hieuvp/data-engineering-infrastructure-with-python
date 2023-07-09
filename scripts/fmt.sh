@@ -17,3 +17,8 @@ set -eoux pipefail
   terraform fmt
   prettier --write ./*.yaml
 )
+
+(
+  cd kubernetes
+  terraform fmt
+)

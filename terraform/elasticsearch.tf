@@ -9,6 +9,8 @@ resource "kubernetes_namespace" "elastic" {
 }
 
 resource "helm_release" "elasticsearch" {
+  count = local.elastic_enabled ? 1 : 0
+
   name      = local.elasticsearch_name
   chart     = "../helm-charts/elasticsearch"
   namespace = kubernetes_namespace.elastic.metadata.0.name
@@ -52,10 +54,10 @@ data "kubernetes_secret" "elasticsearch_credentials" {
 
 output "elasticsearch_username" {
   sensitive = true
-  value     = data.kubernetes_secret.elasticsearch_credentials.data.username
+  value     = local.elastic_enabled ? data.kubernetes_secret.elasticsearch_credentials.data.username : ""
 }
 
 output "elasticsearch_password" {
   sensitive = true
-  value     = data.kubernetes_secret.elasticsearch_credentials.data.password
+  value     = local.elastic_enabled ? data.kubernetes_secret.elasticsearch_credentials.data.password : ""
 }

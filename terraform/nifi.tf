@@ -10,6 +10,8 @@ resource "kubernetes_namespace" "nifi" {
 }
 
 resource "helm_release" "nifi" {
+  count = local.nifi_enabled ? 1 : 0
+
   name      = local.nifi_name
   chart     = "../helm-charts/nifi"
   namespace = kubernetes_namespace.nifi.metadata.0.name

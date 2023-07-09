@@ -43,3 +43,15 @@ kubectl port-forward --namespace nifi service/nifi "${nifi_port}:${nifi_port}" &
 echo
 echo "NiFi: https://127.0.0.1:${nifi_port}/nifi/"
 echo "admin/${nifi_password}"
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Airflow
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+AIRFLOW_PORT=30237
+
+kubectl port-forward --namespace airflow service/airflow-webserver "${AIRFLOW_PORT}:8080" &> /dev/null &
+
+echo
+echo "Airflow: http://127.0.0.1:${AIRFLOW_PORT}/"
+echo "admin/admin"

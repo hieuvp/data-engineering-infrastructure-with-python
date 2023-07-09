@@ -3,6 +3,8 @@ locals {
 }
 
 resource "helm_release" "kibana" {
+  count = local.elastic_enabled ? 1 : 0
+
   name      = local.kibana_name
   chart     = "../helm-charts/kibana"
   namespace = kubernetes_namespace.elastic.metadata.0.name

@@ -1,0 +1,11 @@
+createUserJob:
+  useHelmHooks: false
+  applyCustomEnv: false
+
+migrateDatabaseJob:
+  useHelmHooks: false
+  applyCustomEnv: false
+
+extraEnv: |
+  - name: AIRFLOW__CORE__LOAD_EXAMPLES
+    value: 'True'
