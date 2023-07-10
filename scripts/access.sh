@@ -70,13 +70,13 @@ echo "Airflow: http://127.0.0.1:${AIRFLOW_PORT}/"
 echo "admin / admin"
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# PostgreSQL and pgAdmin
+# PostgreSQL and pgAdmin 4
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 POSTGRESQL_PORT=5432
 postgresql_password=$(cd terraform && terraform output -raw postgresql_password)
 
-kubectl port-forward --namespace postgres service/postgresql "${POSTGRESQL_PORT}:${POSTGRESQL_PORT}" &> /dev/null &
+kubectl port-forward --namespace postgres service/postgresql $POSTGRESQL_PORT:$POSTGRESQL_PORT &> /dev/null &
 
 echo
 echo "PostgreSQL:"
@@ -89,5 +89,6 @@ pgadmin_password=$(cd terraform && terraform output -raw pgadmin_password)
 kubectl port-forward --namespace postgres service/pgadmin4 "${PGADMIN_PORT}:80" &> /dev/null &
 
 echo
-echo "pgAdmin: http://127.0.0.1:${PGADMIN_PORT}/"
+echo "pgAdmin 4: http://127.0.0.1:${PGADMIN_PORT}/"
 echo "${pgadmin_email} / ${pgadmin_password}"
+echo "PostgreSQL Password: ${postgresql_password}"
