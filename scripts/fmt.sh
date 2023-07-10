@@ -19,6 +19,6 @@ set -eoux pipefail
 )
 
 (
-  cd kubernetes
+  cd kubernetes/gke
   terraform fmt
 )

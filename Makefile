@@ -6,9 +6,19 @@ fmt:
 access:
 	scripts/access.sh
 
-.PHONY: terraform
-terraform:
-	scripts/update-kubeconfig.sh
+.PHONY: terminate
+terminate:
+	cd kubernetes/gke && terraform destroy
+
+.PHONY: terraform-minikube
+terraform-minikube:
+	scripts/update-kubeconfig-minikube.sh
+	scripts/apply-terraform.sh
+
+.PHONY: terraform-gke
+terraform-gke:
+	cd kubernetes/gke && terraform apply
+	scripts/update-kubeconfig-gke.sh
 	scripts/apply-terraform.sh
 
 .PHONY: pull-helm-charts

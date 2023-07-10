@@ -18,18 +18,31 @@ sleep 2s
 set +x
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Kibana
+# Elasticsearch and Kibana
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+ELASTICSEARCH_PORT=9200
 KIBANA_PORT=5601
-elasticsearch_username=$(cd terraform && terraform output -raw elasticsearch_username)
-elasticsearch_password=$(cd terraform && terraform output -raw elasticsearch_password)
+elastic_enabled=$(cd terraform && terraform output -raw elastic_enabled)
 
-kubectl port-forward --namespace elastic service/kibana $KIBANA_PORT:$KIBANA_PORT &> /dev/null &
+if [ "$elastic_enabled" = "true" ]; then
 
-echo
-echo "Kibana: http://127.0.0.1:${KIBANA_PORT}/"
-echo "${elasticsearch_username}/${elasticsearch_password}"
+  elasticsearch_username=$(cd terraform && terraform output -raw elasticsearch_username)
+  elasticsearch_password=$(cd terraform && terraform output -raw elasticsearch_password)
+
+  kubectl port-forward --namespace elastic service/elasticsearch $ELASTICSEARCH_PORT:$ELASTICSEARCH_PORT &> /dev/null &
+
+  echo
+  echo "Elasticsearch:"
+  echo "https://${elasticsearch_username}:${elasticsearch_password}@127.0.0.1:${ELASTICSEARCH_PORT}/"
+
+  kubectl port-forward --namespace elastic service/kibana $KIBANA_PORT:$KIBANA_PORT &> /dev/null &
+
+  echo
+  echo "Kibana: http://127.0.0.1:${KIBANA_PORT}/"
+  echo "${elasticsearch_username} / ${elasticsearch_password}"
+
+fi
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # NiFi
@@ -42,7 +55,7 @@ kubectl port-forward --namespace nifi service/nifi "${nifi_port}:${nifi_port}" &
 
 echo
 echo "NiFi: https://127.0.0.1:${nifi_port}/nifi/"
-echo "admin/${nifi_password}"
+echo "admin / ${nifi_password}"
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Airflow
@@ -54,4 +67,27 @@ kubectl port-forward --namespace airflow service/airflow-webserver "${AIRFLOW_PO
 
 echo
 echo "Airflow: http://127.0.0.1:${AIRFLOW_PORT}/"
-echo "admin/admin"
+echo "admin / admin"
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# PostgreSQL and pgAdmin
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+POSTGRESQL_PORT=5432
+postgresql_password=$(cd terraform && terraform output -raw postgresql_password)
+
+kubectl port-forward --namespace postgres service/postgresql "${POSTGRESQL_PORT}:${POSTGRESQL_PORT}" &> /dev/null &
+
+echo
+echo "PostgreSQL:"
+echo "PGPASSWORD=${postgresql_password} psql --host=127.0.0.1 --port=${POSTGRESQL_PORT} --username=postgres"
+
+PGADMIN_PORT=30238
+pgadmin_email=$(cd terraform && terraform output -raw pgadmin_email)
+pgadmin_password=$(cd terraform && terraform output -raw pgadmin_password)
+
+kubectl port-forward --namespace postgres service/pgadmin4 "${PGADMIN_PORT}:80" &> /dev/null &
+
+echo
+echo "pgAdmin: http://127.0.0.1:${PGADMIN_PORT}/"
+echo "${pgadmin_email} / ${pgadmin_password}"

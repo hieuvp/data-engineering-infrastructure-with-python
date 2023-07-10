@@ -1,0 +1,21 @@
+resources:
+  requests:
+    cpu: "500m"
+    memory: "500Mi"
+  limits:
+    cpu: "1000m"
+    memory: "1000Mi"
+
+serverDefinitions:
+  enabled: true
+
+  servers:
+    firstServer:
+      Name: "Minimally Defined Server"
+      Group: "Servers"
+      Host: "postgresql"
+      Port: 5432
+      Username: "postgres"
+      MaintenanceDB: "postgres"
+      SSLMode: "prefer"
+      Timeout: 10
