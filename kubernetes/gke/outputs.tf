@@ -14,8 +14,3 @@ output "cluster_name" {
 output "cluster_zone" {
   value = var.zone
 }
-
-output "service_account" {
-  description = "The default service account used for running nodes."
-  value       = module.gke.service_account
-}

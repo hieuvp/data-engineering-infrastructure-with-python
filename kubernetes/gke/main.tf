@@ -1,6 +1,4 @@
 locals {
-  cluster_type = "simple-zonal"
-
   network    = "gke-network"
   subnetwork = "gke-subnet"
 
@@ -16,7 +14,7 @@ provider "kubernetes" {
   cluster_ca_certificate = base64decode(module.gke.ca_certificate)
 }
 
-module "gcp-network" {
+module "network" {
   source  = "terraform-google-modules/network/google"
   version = ">= 4.0.1"
 
@@ -49,19 +47,17 @@ module "gke" {
   source = "../../terraform-modules/google-kubernetes-engine"
 
   project_id = var.project_id
-  name       = "${local.cluster_type}-cluster"
+  name       = "simple-zonal-cluster"
+  regional   = false
+  region     = var.region
+  zones      = [var.zone]
 
-  regional = false
-  region   = var.region
-  zones    = [var.zone]
-
-  network           = module.gcp-network.network_name
-  subnetwork        = module.gcp-network.subnets_names[0]
+  network           = module.network.network_name
+  subnetwork        = module.network.subnets_names[0]
   ip_range_pods     = local.ip_range_pods_name
   ip_range_services = local.ip_range_services_name
 
   create_service_account = false
-  service_account        = var.service_account
 
   node_pools = [
     {

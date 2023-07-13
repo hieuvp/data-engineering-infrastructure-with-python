@@ -9,17 +9,18 @@ access:
 .PHONY: terminate
 terminate:
 	cd kubernetes/gke && terraform destroy
+	scripts/reset-terraform.sh
 
 .PHONY: terraform-minikube
 terraform-minikube:
 	scripts/update-kubeconfig-minikube.sh
-	scripts/apply-terraform.sh
+	scripts/apply-terraform.sh minikube
 
 .PHONY: terraform-gke
 terraform-gke:
 	cd kubernetes/gke && terraform apply
 	scripts/update-kubeconfig-gke.sh
-	scripts/apply-terraform.sh
+	scripts/apply-terraform.sh gke
 
 .PHONY: pull-helm-charts
 pull-helm-charts:
