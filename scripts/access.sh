@@ -22,7 +22,9 @@ set +x
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ELASTICSEARCH_PORT=9200
-KIBANA_PORT=5601
+KIBANA_LOCAL_PORT=5601
+KIBANA_REMOTE_PORT=8080
+
 elastic_enabled=$(cd terraform && terraform output -raw elastic_enabled)
 
 if [ "$elastic_enabled" = "true" ]; then
@@ -36,10 +38,18 @@ if [ "$elastic_enabled" = "true" ]; then
   echo "Elasticsearch:"
   echo "https://${elasticsearch_username}:${elasticsearch_password}@127.0.0.1:${ELASTICSEARCH_PORT}/"
 
-  kubectl port-forward --namespace elastic service/kibana $KIBANA_PORT:$KIBANA_PORT &> /dev/null &
+  kubectl port-forward --namespace elastic service/kibana "${KIBANA_LOCAL_PORT}:${KIBANA_REMOTE_PORT}" &> /dev/null &
 
   echo
-  echo "Kibana: http://127.0.0.1:${KIBANA_PORT}/"
+  echo "Kibana:"
+  echo "http://127.0.0.1:${KIBANA_LOCAL_PORT}/"
+
+  kibana_public_ip=$(kubectl get services --selector app=kibana --namespace elastic --output jsonpath="{.items[0].status.loadBalancer.ingress[0].ip}")
+
+  if [ -n "$kibana_public_ip" ]; then
+    echo "http://${kibana_public_ip}.nip.io:${KIBANA_REMOTE_PORT}/"
+  fi
+
   echo "${elasticsearch_username} / ${elasticsearch_password}"
 
 fi
@@ -54,19 +64,36 @@ nifi_password=$(cd terraform && terraform output -raw nifi_password)
 kubectl port-forward --namespace nifi service/nifi "${nifi_port}:${nifi_port}" &> /dev/null &
 
 echo
-echo "NiFi: https://127.0.0.1:${nifi_port}/nifi/"
+echo "NiFi:"
+echo "https://127.0.0.1:${nifi_port}/nifi/"
+
+nifi_public_ip=$(kubectl get services --selector app=nifi --namespace nifi --output jsonpath="{.items[0].status.loadBalancer.ingress[0].ip}")
+
+if [ -n "$nifi_public_ip" ]; then
+  echo "https://${nifi_public_ip}.nip.io:${nifi_port}/nifi/"
+fi
+
 echo "admin / ${nifi_password}"
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Airflow
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-AIRFLOW_PORT=30237
+AIRFLOW_LOCAL_PORT=30237
+AIRFLOW_REMOTE_PORT=8080
 
-kubectl port-forward --namespace airflow service/airflow-webserver "${AIRFLOW_PORT}:8080" &> /dev/null &
+kubectl port-forward --namespace airflow service/airflow-webserver "${AIRFLOW_LOCAL_PORT}:${AIRFLOW_REMOTE_PORT}" &> /dev/null &
 
 echo
-echo "Airflow: http://127.0.0.1:${AIRFLOW_PORT}/"
+echo "Airflow:"
+echo "http://127.0.0.1:${AIRFLOW_LOCAL_PORT}/"
+
+airflow_public_ip=$(kubectl get services --selector component=webserver --namespace airflow --output jsonpath="{.items[0].status.loadBalancer.ingress[0].ip}")
+
+if [ -n "$airflow_public_ip" ]; then
+  echo "http://${airflow_public_ip}.nip.io:${AIRFLOW_REMOTE_PORT}/"
+fi
+
 echo "admin / admin"
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -82,13 +109,23 @@ echo
 echo "PostgreSQL:"
 echo "PGPASSWORD=${postgresql_password} psql --host=127.0.0.1 --port=${POSTGRESQL_PORT} --username=postgres"
 
-PGADMIN_PORT=30238
+PGADMIN_LOCAL_PORT=30238
+PGADMIN_REMOTE_PORT=80
+
 pgadmin_email=$(cd terraform && terraform output -raw pgadmin_email)
 pgadmin_password=$(cd terraform && terraform output -raw pgadmin_password)
 
-kubectl port-forward --namespace postgres service/pgadmin4 "${PGADMIN_PORT}:80" &> /dev/null &
+kubectl port-forward --namespace postgres service/pgadmin4 "${PGADMIN_LOCAL_PORT}:${PGADMIN_REMOTE_PORT}" &> /dev/null &
 
 echo
-echo "pgAdmin 4: http://127.0.0.1:${PGADMIN_PORT}/"
+echo "pgAdmin 4:"
+echo "http://127.0.0.1:${PGADMIN_LOCAL_PORT}/"
+
+pgadmin_public_ip=$(kubectl get services --selector app.kubernetes.io/name=pgadmin4 --namespace postgres --output jsonpath="{.items[0].status.loadBalancer.ingress[0].ip}")
+
+if [ -n "$pgadmin_public_ip" ]; then
+  echo "http://${pgadmin_public_ip}.nip.io"
+fi
+
 echo "${pgadmin_email} / ${pgadmin_password}"
 echo "PostgreSQL Password: ${postgresql_password}"

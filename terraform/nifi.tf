@@ -1,6 +1,14 @@
 locals {
-  nifi_name = "nifi"
-  nifi_port = "30236"
+  nifi_name        = "nifi"
+  nifi_port        = "8080"
+  nifi_external_ip = data.kubernetes_service.nifi.status != null ? data.kubernetes_service.nifi.status.0.load_balancer.0.ingress.0.ip : null
+}
+
+data "kubernetes_service" "nifi" {
+  metadata {
+    name      = local.nifi_name
+    namespace = kubernetes_namespace.nifi.metadata.0.name
+  }
 }
 
 resource "kubernetes_namespace" "nifi" {
@@ -41,6 +49,11 @@ resource "helm_release" "nifi" {
     value = local.nifi_port
   }
 
+  set {
+    name  = "properties.webProxyHost"
+    value = local.nifi_external_ip != null ? "${local.nifi_external_ip}.nip.io:${local.nifi_port}" : "null"
+  }
+
   # https://nifi.apache.org/docs/nifi-docs/html/administration-guide.html#security_properties
   set {
     name  = "properties.sensitiveKey"
@@ -64,8 +77,8 @@ data "template_file" "nifi" {
 }
 
 resource "random_password" "nifi_key" {
-  length  = 16
-  special = true
+  length  = 32
+  special = false
 }
 
 resource "random_password" "nifi_password" {

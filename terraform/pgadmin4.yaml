@@ -1,3 +1,6 @@
+service:
+  type: LoadBalancer
+
 resources:
   requests:
     cpu: "1000m"

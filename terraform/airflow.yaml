@@ -8,4 +8,8 @@ migrateDatabaseJob:
 
 extraEnv: |
   - name: AIRFLOW__CORE__LOAD_EXAMPLES
-    value: 'True'
+    value: 'False'
+
+webserver:
+  service:
+    type: LoadBalancer

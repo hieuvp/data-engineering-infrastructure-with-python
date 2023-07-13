@@ -4,7 +4,7 @@ set -eoux pipefail
 
 cd terraform
 
-trash .terraform .terraform.lock.hcl terraform.tfstate.d
+trash .terraform .terraform.lock.hcl terraform.tfstate.d kube
 
 terraform workspace new minikube
 terraform workspace select minikube
