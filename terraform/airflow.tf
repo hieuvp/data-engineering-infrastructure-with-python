@@ -30,6 +30,11 @@ resource "helm_release" "airflow" {
     value = kubernetes_namespace.airflow.metadata.0.name
   }
 
+  set {
+    name  = "webserver.defaultUser.password"
+    value = random_password.airflow_password.result
+  }
+
   values = [
     data.template_file.airflow.rendered,
   ]
@@ -39,4 +44,14 @@ data "template_file" "airflow" {
   template = file("airflow.yaml")
   vars = {
   }
+}
+
+resource "random_password" "airflow_password" {
+  length  = 16
+  special = false
+}
+
+output "airflow_password" {
+  sensitive = true
+  value     = random_password.airflow_password.result
 }

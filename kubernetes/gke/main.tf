@@ -61,13 +61,13 @@ module "gke" {
 
   node_pools = [
     {
-      name         = "c3-standard-8-spot-node-pool"
+      name         = "c3-standard-8-spot-pool"
       machine_type = "c3-standard-8"
       spot         = true
       disk_type    = "pd-balanced"
     },
     {
-      name         = "c3-standard-22-spot-node-pool"
+      name         = "c3-standard-22-spot-pool"
       machine_type = "c3-standard-22"
       spot         = true
       disk_type    = "pd-balanced"

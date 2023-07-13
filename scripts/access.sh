@@ -82,6 +82,8 @@ echo "admin / ${nifi_password}"
 AIRFLOW_LOCAL_PORT=30237
 AIRFLOW_REMOTE_PORT=8080
 
+airflow_password=$(cd terraform && terraform output -raw airflow_password)
+
 kubectl port-forward --namespace airflow service/airflow-webserver "${AIRFLOW_LOCAL_PORT}:${AIRFLOW_REMOTE_PORT}" &> /dev/null &
 
 echo
@@ -94,13 +96,14 @@ if [ -n "$airflow_external_ip" ]; then
   echo "http://${airflow_external_ip}.nip.io:${AIRFLOW_REMOTE_PORT}/"
 fi
 
-echo "admin / admin"
+echo "admin / ${airflow_password}"
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # PostgreSQL and pgAdmin 4
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 POSTGRESQL_PORT=5432
+
 postgresql_password=$(cd terraform && terraform output -raw postgresql_password)
 
 kubectl port-forward --namespace postgres service/postgresql $POSTGRESQL_PORT:$POSTGRESQL_PORT &> /dev/null &
