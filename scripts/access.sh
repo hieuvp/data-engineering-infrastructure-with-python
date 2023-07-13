@@ -44,10 +44,10 @@ if [ "$elastic_enabled" = "true" ]; then
   echo "Kibana:"
   echo "http://127.0.0.1:${KIBANA_LOCAL_PORT}/"
 
-  kibana_public_ip=$(kubectl get services --selector app=kibana --namespace elastic --output jsonpath="{.items[0].status.loadBalancer.ingress[0].ip}")
+  kibana_external_ip=$(kubectl get service --selector app=kibana --namespace elastic --output jsonpath="{.items[0].status.loadBalancer.ingress[0].ip}")
 
-  if [ -n "$kibana_public_ip" ]; then
-    echo "http://${kibana_public_ip}.nip.io:${KIBANA_REMOTE_PORT}/"
+  if [ -n "$kibana_external_ip" ]; then
+    echo "http://${kibana_external_ip}.nip.io:${KIBANA_REMOTE_PORT}/"
   fi
 
   echo "${elasticsearch_username} / ${elasticsearch_password}"
@@ -67,10 +67,10 @@ echo
 echo "NiFi:"
 echo "https://127.0.0.1:${nifi_port}/nifi/"
 
-nifi_public_ip=$(kubectl get services --selector app=nifi --namespace nifi --output jsonpath="{.items[0].status.loadBalancer.ingress[0].ip}")
+nifi_external_ip=$(kubectl get service --selector app=nifi --namespace nifi --output jsonpath="{.items[0].status.loadBalancer.ingress[0].ip}")
 
-if [ -n "$nifi_public_ip" ]; then
-  echo "https://${nifi_public_ip}.nip.io:${nifi_port}/nifi/"
+if [ -n "$nifi_external_ip" ]; then
+  echo "https://${nifi_external_ip}.nip.io:${nifi_port}/nifi/"
 fi
 
 echo "admin / ${nifi_password}"
@@ -88,10 +88,10 @@ echo
 echo "Airflow:"
 echo "http://127.0.0.1:${AIRFLOW_LOCAL_PORT}/"
 
-airflow_public_ip=$(kubectl get services --selector component=webserver --namespace airflow --output jsonpath="{.items[0].status.loadBalancer.ingress[0].ip}")
+airflow_external_ip=$(kubectl get service --selector component=webserver --namespace airflow --output jsonpath="{.items[0].status.loadBalancer.ingress[0].ip}")
 
-if [ -n "$airflow_public_ip" ]; then
-  echo "http://${airflow_public_ip}.nip.io:${AIRFLOW_REMOTE_PORT}/"
+if [ -n "$airflow_external_ip" ]; then
+  echo "http://${airflow_external_ip}.nip.io:${AIRFLOW_REMOTE_PORT}/"
 fi
 
 echo "admin / admin"
@@ -121,10 +121,10 @@ echo
 echo "pgAdmin 4:"
 echo "http://127.0.0.1:${PGADMIN_LOCAL_PORT}/"
 
-pgadmin_public_ip=$(kubectl get services --selector app.kubernetes.io/name=pgadmin4 --namespace postgres --output jsonpath="{.items[0].status.loadBalancer.ingress[0].ip}")
+pgadmin_external_ip=$(kubectl get service --selector app.kubernetes.io/name=pgadmin4 --namespace postgres --output jsonpath="{.items[0].status.loadBalancer.ingress[0].ip}")
 
-if [ -n "$pgadmin_public_ip" ]; then
-  echo "http://${pgadmin_public_ip}.nip.io"
+if [ -n "$pgadmin_external_ip" ]; then
+  echo "http://${pgadmin_external_ip}.nip.io/"
 fi
 
 echo "${pgadmin_email} / ${pgadmin_password}"
