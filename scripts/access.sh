@@ -75,6 +75,21 @@ fi
 
 echo "admin / ${nifi_password}"
 
+NIFI_REGISTRY_LOCAL_PORT=18080
+NIFI_REGISTRY_REMOTE_PORT=8080
+
+kubectl port-forward --namespace nifi service/nifi-registry "${NIFI_REGISTRY_LOCAL_PORT}:${NIFI_REGISTRY_REMOTE_PORT}" &> /dev/null &
+
+echo
+echo "NiFi Registry:"
+echo "http://127.0.0.1:${NIFI_REGISTRY_LOCAL_PORT}/nifi-registry/"
+
+nifi_registry_external_ip=$(kubectl get service --selector app.kubernetes.io/name=registry --namespace nifi --output jsonpath="{.items[0].status.loadBalancer.ingress[0].ip}")
+
+if [ -n "$nifi_registry_external_ip" ]; then
+  echo "http://${nifi_registry_external_ip}.nip.io:${NIFI_REGISTRY_REMOTE_PORT}/nifi-registry/"
+fi
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Airflow
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

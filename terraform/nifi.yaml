@@ -28,3 +28,14 @@ logresources:
   limits:
     cpu: 250m
     memory: 250Mi
+
+postStart: >
+  mkdir /opt/nifi/drivers;
+  wget -P /opt/nifi/drivers https://jdbc.postgresql.org/download/postgresql-42.6.0.jar
+
+registry:
+  enabled: true
+
+  service:
+    type: LoadBalancer
+    port: 8080
