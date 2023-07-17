@@ -11,8 +11,8 @@ provider "helm" {
 locals {
   airflow_enabled  = true
   elastic_enabled  = true
-  kafka_enabled    = true
+  kafka_enabled    = false
   nifi_enabled     = true
   postgres_enabled = true
-  spark_enabled    = true
+  spark_enabled    = false
 }

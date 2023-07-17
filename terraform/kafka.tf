@@ -15,7 +15,6 @@ resource "helm_release" "kafka" {
   chart     = "../helm-charts/kafka"
   namespace = kubernetes_namespace.kafka.metadata.0.name
 
-
   values = [
     data.template_file.kafka.rendered,
   ]
