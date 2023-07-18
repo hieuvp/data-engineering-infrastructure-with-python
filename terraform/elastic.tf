@@ -1,6 +1,4 @@
-locals {
-
-}
+locals {}
 
 resource "kubernetes_namespace" "elastic" {
   metadata {
