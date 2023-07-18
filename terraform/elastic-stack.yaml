@@ -1,0 +1,55 @@
+eck-elasticsearch:
+  nameOverride: elasticsearch
+  fullnameOverride: elasticsearch
+
+  annotations:
+    eck.k8s.elastic.co/license: basic
+
+  nodeSets:
+    - name: default
+      count: 1
+
+      config:
+        node.store.allow_mmap: false
+
+      podTemplate:
+        spec:
+          containers:
+            - name: elasticsearch
+              resources:
+                requests:
+                  cpu: 1
+                  memory: 2Gi
+                limits:
+                  cpu: 2
+                  memory: 4Gi
+
+eck-kibana:
+  nameOverride: kibana
+  fullnameOverride: kibana
+
+  annotations:
+    eck.k8s.elastic.co/license: basic
+
+  spec:
+    podTemplate:
+      spec:
+        containers:
+          - name: kibana
+            resources:
+              requests:
+                cpu: "500m"
+                memory: 1Gi
+              limits:
+                cpu: "1000m"
+                memory: 2Gi
+
+    http:
+      service:
+        spec:
+          type: LoadBalancer
+          ports:
+            - name: https
+              protocol: TCP
+              port: 8080
+              targetPort: 5601

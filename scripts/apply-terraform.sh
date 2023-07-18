@@ -3,7 +3,6 @@
 set -eou pipefail
 
 readonly TERRAFORM_WORKSPACE_NAME="$1"
-export KUBECONFIG="terraform/kube/config"
 
 set -x
 
