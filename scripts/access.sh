@@ -29,28 +29,27 @@ elastic_enabled=$(cd terraform && terraform output -raw elastic_enabled)
 
 if [ "$elastic_enabled" = "true" ]; then
 
-  elasticsearch_username=$(cd terraform && terraform output -raw elasticsearch_username)
-  elasticsearch_password=$(cd terraform && terraform output -raw elasticsearch_password)
+  elasticsearch_password=$(kubectl get secret elasticsearch-es-elastic-user --namespace elastic --output go-template="{{.data.elastic | base64decode}}")
 
-  kubectl port-forward --namespace elastic service/elasticsearch $ELASTICSEARCH_PORT:$ELASTICSEARCH_PORT &> /dev/null &
+  kubectl port-forward --namespace elastic service/elasticsearch-es-http $ELASTICSEARCH_PORT:$ELASTICSEARCH_PORT &> /dev/null &
 
   echo
   echo "Elasticsearch:"
-  echo "https://${elasticsearch_username}:${elasticsearch_password}@127.0.0.1:${ELASTICSEARCH_PORT}/"
+  echo "https://elastic:${elasticsearch_password}@127.0.0.1:${ELASTICSEARCH_PORT}/"
 
-  kubectl port-forward --namespace elastic service/kibana "${KIBANA_LOCAL_PORT}:${KIBANA_REMOTE_PORT}" &> /dev/null &
+  kubectl port-forward --namespace elastic service/kibana-kb-http "${KIBANA_LOCAL_PORT}:${KIBANA_REMOTE_PORT}" &> /dev/null &
 
   echo
   echo "Kibana:"
-  echo "http://127.0.0.1:${KIBANA_LOCAL_PORT}/"
+  echo "https://127.0.0.1:${KIBANA_LOCAL_PORT}/"
 
-  kibana_external_ip=$(kubectl get service --selector app=kibana --namespace elastic --output jsonpath="{.items[0].status.loadBalancer.ingress[0].ip}")
+  kibana_external_ip=$(kubectl get service kibana-kb-http --namespace elastic --output jsonpath="{.status.loadBalancer.ingress[0].ip}")
 
   if [ -n "$kibana_external_ip" ]; then
-    echo "http://${kibana_external_ip}.nip.io:${KIBANA_REMOTE_PORT}/"
+    echo "https://${kibana_external_ip}.nip.io:${KIBANA_REMOTE_PORT}/"
   fi
 
-  echo "${elasticsearch_username} / ${elasticsearch_password}"
+  echo "elastic / ${elasticsearch_password}"
 
 fi
 

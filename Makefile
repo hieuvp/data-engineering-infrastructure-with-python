@@ -25,7 +25,8 @@ terraform-gke:
 .PHONY: pull-helm-charts
 pull-helm-charts:
 	scripts/pull-chart-airflow.sh
-	scripts/pull-chart-elastic.sh
+	scripts/pull-chart-elastic-operator.sh
+	scripts/pull-chart-elastic-stack.sh
 	scripts/pull-chart-kafka.sh
 	scripts/pull-chart-nifi.sh
 	scripts/pull-chart-pgadmin4.sh
