@@ -47,7 +47,7 @@ module "gke" {
   source = "../../terraform-modules/google-kubernetes-engine"
 
   project_id = var.project_id
-  name       = "simple-zonal-cluster"
+  name       = var.cluster_name
   regional   = false
   region     = var.region
   zones      = [var.zone]

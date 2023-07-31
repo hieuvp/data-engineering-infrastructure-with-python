@@ -9,6 +9,7 @@ access:
 .PHONY: terminate
 terminate:
 	cd kubernetes/gke && terraform destroy
+	scripts/delete-gke-disks.sh
 	scripts/reset-terraform.sh
 
 .PHONY: terraform-minikube
@@ -19,6 +20,7 @@ terraform-minikube:
 .PHONY: terraform-gke
 terraform-gke:
 	cd kubernetes/gke && terraform apply
+	sleep 3s
 	scripts/update-kubeconfig-gke.sh
 	scripts/apply-terraform.sh gke
 
