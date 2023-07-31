@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-# GKE cluster won't delete the persistent disks that are associated with PVCs during destruction.
-# This step will perform a complete deletion of the persistent disks in order to save money.
+# GKE cluster won't delete the persistent disks that are associated with PVCs during destruction
+# This script will perform a complete deletion of the persistent disks in order to save money
 
 set -eou pipefail
 
 PROJECT_ID=$(cd kubernetes/gke && echo "var.project_id" | terraform console | sed 's/"//g')
-CLUSTER_ZONE=$(cd kubernetes/gke && echo "var.zone" | terraform console | sed 's/"//g')
+CLUSTER_ZONE=$(cd kubernetes/gke && echo "var.cluster_zone" | terraform console | sed 's/"//g')
 
 set -x
 

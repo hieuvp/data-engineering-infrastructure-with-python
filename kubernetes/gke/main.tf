@@ -50,7 +50,7 @@ module "gke" {
   name       = var.cluster_name
   regional   = false
   region     = var.region
-  zones      = [var.zone]
+  zones      = [var.cluster_zone]
 
   network           = module.network.network_name
   subnetwork        = module.network.subnets_names[0]

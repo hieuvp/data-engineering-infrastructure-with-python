@@ -12,5 +12,5 @@ output "cluster_name" {
 }
 
 output "cluster_zone" {
-  value = var.zone
+  value = var.cluster_zone
 }
